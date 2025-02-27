@@ -144,5 +144,52 @@ def init_database():
         ('index', '指数板块', '各类股票指数')
     ])
     
+    # 创建日线数据表
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS stock_daily (
+        stock_code TEXT NOT NULL,
+        stock_name TEXT NOT NULL,
+        trade_date DATE NOT NULL,
+        open_price REAL,
+        high_price REAL,
+        low_price REAL,
+        close_price REAL,
+        volume INTEGER,
+        amount REAL,
+        PRIMARY KEY (stock_code, trade_date)
+    )''')
+    
+    # 创建5分钟数据表
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS stock_5min (
+        stock_code TEXT NOT NULL,
+        stock_name TEXT NOT NULL,
+        trade_date DATE NOT NULL,
+        trade_time TIME NOT NULL,
+        open_price REAL,
+        high_price REAL,
+        low_price REAL,
+        close_price REAL,
+        volume INTEGER,
+        amount REAL,
+        PRIMARY KEY (stock_code, trade_date, trade_time)
+    )''')
+    
+    # 创建1分钟数据表
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS stock_1min (
+        stock_code TEXT NOT NULL,
+        stock_name TEXT NOT NULL,
+        trade_date DATE NOT NULL,
+        trade_time TIME NOT NULL,
+        open_price REAL,
+        high_price REAL,
+        low_price REAL,
+        close_price REAL,
+        volume INTEGER,
+        amount REAL,
+        PRIMARY KEY (stock_code, trade_date, trade_time)
+    )''')
+    
     conn.commit()
     conn.close() 

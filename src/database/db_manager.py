@@ -111,3 +111,107 @@ class DatabaseManager:
                 logging.error(f"错误类型: {type(e).__name__}")
                 logging.error(f"错误信息: {str(e)}")
                 raise
+
+    def save_daily_data(self, data_list: List[Dict]):
+        """保存日线数据"""
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            try:
+                # 开始事务
+                cursor.execute('BEGIN TRANSACTION')
+                
+                # 批量插入数据
+                cursor.executemany('''
+                INSERT OR REPLACE INTO stock_daily (
+                    stock_code, stock_name, trade_date,
+                    open_price, high_price, low_price,
+                    close_price, volume, amount
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ''', [(
+                    item['stock_code'],
+                    item['stock_name'],
+                    item['trade_date'],
+                    item['open_price'],
+                    item['high_price'],
+                    item['low_price'],
+                    item['close_price'],
+                    item['volume'],
+                    item['amount']
+                ) for item in data_list])
+                
+                # 提交事务
+                conn.commit()
+                logging.info(f"成功保存日线数据，数量: {len(data_list)}")
+                
+            except Exception as e:
+                conn.rollback()
+                logging.error(f"保存日线数据失败: {str(e)}")
+                raise
+
+    def save_5min_data(self, data_list: List[Dict]):
+        """保存5分钟数据"""
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            try:
+                cursor.execute('BEGIN TRANSACTION')
+                
+                cursor.executemany('''
+                INSERT OR REPLACE INTO stock_5min (
+                    stock_code, stock_name, trade_date,
+                    trade_time, open_price, high_price,
+                    low_price, close_price, volume, amount
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ''', [(
+                    item['stock_code'],
+                    item['stock_name'],
+                    item['trade_date'],
+                    item['trade_time'],
+                    item['open_price'],
+                    item['high_price'],
+                    item['low_price'],
+                    item['close_price'],
+                    item['volume'],
+                    item['amount']
+                ) for item in data_list])
+                
+                conn.commit()
+                logging.info(f"成功保存5分钟数据，数量: {len(data_list)}")
+                
+            except Exception as e:
+                conn.rollback()
+                logging.error(f"保存5分钟数据失败: {str(e)}")
+                raise
+
+    def save_1min_data(self, data_list: List[Dict]):
+        """保存1分钟数据"""
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            try:
+                cursor.execute('BEGIN TRANSACTION')
+                
+                cursor.executemany('''
+                INSERT OR REPLACE INTO stock_1min (
+                    stock_code, stock_name, trade_date,
+                    trade_time, open_price, high_price,
+                    low_price, close_price, volume, amount
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ''', [(
+                    item['stock_code'],
+                    item['stock_name'],
+                    item['trade_date'],
+                    item['trade_time'],
+                    item['open_price'],
+                    item['high_price'],
+                    item['low_price'],
+                    item['close_price'],
+                    item['volume'],
+                    item['amount']
+                ) for item in data_list])
+                
+                conn.commit()
+                logging.info(f"成功保存1分钟数据，数量: {len(data_list)}")
+                
+            except Exception as e:
+                conn.rollback()
+                logging.error(f"保存1分钟数据失败: {str(e)}")
+                raise
